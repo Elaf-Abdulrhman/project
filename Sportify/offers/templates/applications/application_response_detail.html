@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+{% block title %}Response Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 700px;">
+    <a href="{% url 'offers:offer_applicants' application.offer.id %}" class="btn btn-outline-secondary mb-4">
+        ← Back to Applicants
+    </a>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h4 class="mb-3">Response to <strong>@{{ application.athlete.username }}</strong></h4>
+
+            <p><strong>Status:</strong>
+                {% if application.status == 'accepted' %}
+                    <span class="badge bg-success">Accepted</span>
+                {% elif application.status == 'rejected' %}
+                    <span class="badge bg-danger">Rejected</span>
+                {% else %}
+                    <span class="badge bg-secondary">Pending</span>
+                {% endif %}
+            </p>
+
+            {% if application.response_message %}
+                <hr>
+                <p><strong>Message Sent:</strong></p>
+                <div class="alert alert-info">
+                    {{ application.response_message }}
+                </div>
+            {% else %}
+                <p class="text-muted">No message was sent with the response.</p>
+            {% endif %}
+
+            <p class="text-muted mt-4">Responded on {{ application.created_at|date:"M d, Y" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

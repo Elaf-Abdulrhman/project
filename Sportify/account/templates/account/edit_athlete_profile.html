@@ -1,0 +1,128 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Edit Athlete Profile{% endblock %}
+
+{% block content %}
+<style>
+input, select, textarea {
+    background-color: white;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    padding: 10px;
+    width: 100%;
+}
+</style>
+
+<div class="container mt-5" style="max-width: 800px;">
+    <div class="card shadow-sm p-4 bg-light rounded border-0">
+        <h2 class="text-center mb-4 color-black">Edit Your Profile</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                {{ form.username }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                {{ form.email }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">First Name</label>
+                {{ form.first_name }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Last Name</label>
+                {{ form.last_name }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Phone Number</label>
+                {{ form.phoneNumber }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Profile Photo</label><br>
+                {% if form.instance.profilePhoto %}
+                    <img src="{{ form.instance.profilePhoto.url }}" alt="Current Photo"
+                         class="img-thumbnail mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                {% endif %}
+                {{ form.profilePhoto }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Sport</label>
+                {{ form.sport }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">City</label>
+                {{ form.city }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Date of Birth</label>
+                {{ form.dateOfBirth }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Playing Position</label>
+                {{ form.playingPosition }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Height (cm)</label>
+                {{ form.height }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Weight (kg)</label>
+                {{ form.weight }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Gender</label>
+                {{ form.gender }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Availability</label>
+                {{ form.isAvailable }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Profile Privacy</label>
+                {{ form.isPrivate }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">About Me (Bio)</label>
+                {{ form.bio }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Facebook Profile URL</label>
+                {{ form.facebook }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Twitter (X) Profile URL</label>
+                {{ form.twitterX }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Instagram Profile URL</label>
+                {{ form.instagram }}
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-dark px-5">Update Profile</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+
+{% extends 'main/base.html' %}
+
+{% block title %}Sign up as{% endblock %}
+
+{% block content %}
+<style>
+    .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-hover:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+    }
+
+</style>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-5">Do you want to sign up as a Club or Athlete?</h1>
+
+    <div class="row justify-content-center g-4">
+        <div class="col-md-5 d-flex">
+            <a href="{% url 'account:signup_club_view' %}" class="text-decoration-none text-dark w-100">
+                <div class="card card-hover text-center shadow h-100 p-4">
+                    <div class="card-body d-flex flex-column">
+                        <h4 class="card-title mb-3">Sign up as a Club</h4>
+                        <p class="card-text flex-grow-1 fs-5">start your journey as a club with us.</p>
+                        <span class="stretched-link"></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-5 d-flex">
+            <a href="{% url 'account:signup_athlete_view' %}" class="text-decoration-none text-dark w-100">
+                <div class="card card-hover text-center shadow h-100 p-4">
+                    <div class="card-body d-flex flex-column">
+                        <h4 class="card-title mb-3">Sign up as Athlete</h4>
+                        <p class="card-text flex-grow-1 fs-5">showcase your talnet with us.</p>
+                        <span class="stretched-link"></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

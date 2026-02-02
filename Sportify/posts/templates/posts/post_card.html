@@ -1,0 +1,133 @@
+{% load static %}
+{% for post in posts %}
+<div class="card mb-3 shadow-sm p-3 position-relative post-card" data-url="{% url 'posts:post_details' post.id %}">
+
+  <!-- Header: User Info + Actions -->
+  <div class="d-flex justify-content-between align-items-start">
+    <div class="d-flex align-items-center z-2" style="position: relative;">
+      <a href="{% url 'account:profile_view' post.user.id %}" class="text-decoration-none d-flex align-items-center text-dark">
+        {% if post.user.athlete and post.user.athlete.profilePhoto %}
+          <img src="{{ post.user.athlete.profilePhoto.url }}" alt="Profile Photo"
+               class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+        {% elif post.user.club and post.user.club.photo %}
+          <img src="{{ post.user.club.photo.url }}" alt="Profile Photo"
+               class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+        {% else %}
+          <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo"
+               class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+        {% endif %}
+
+        <div>
+          <strong>
+            {% if post.user.athlete %}
+              {{ post.user.first_name }}
+            {% elif post.user.club %}
+              {{ post.user.club.clubName }} <i class="bi bi-patch-check-fill"></i>
+            {% else %}
+              {{ post.user.username }}
+            {% endif %}
+          </strong><br>
+          <small class="text-muted">@{{ post.user.username }}</small>
+        </div>
+      </a>
+    </div>
+
+    <div class="d-flex gap-3 z-2">
+      {% if user.is_authenticated and not user.is_superuser %}
+        <!-- Bookmark -->
+        <form action="{% url 'bookmarks:bookmark_post' post.id %}" method="POST" class="bookmark-form d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 bookmark-btn" data-post-id="{{ post.id }}">
+            {% if post.id in bookmarked_post_ids %}
+              <i class="bi bi-bookmark-fill" style="font-size: 1.2rem;"></i>
+            {% else %}
+              <i class="bi bi-bookmark" style="font-size: 1.2rem;"></i>
+            {% endif %}
+          </button>
+        </form>
+
+        <!-- Like -->
+        <form action="{% url 'posts:like_post' post.id %}" method="POST" class="like-form d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm border-0 bg-transparent p-0 like-btn" data-post-id="{{ post.id }}">
+            {% if post.is_liked %}
+              <i class="bi bi-heart-fill text-danger" style="font-size: 1.3rem;"></i>
+            {% else %}
+              <i class="bi bi-heart" style="font-size: 1.3rem;"></i>
+            {% endif %}
+            <span class="like-count">{{ post.total_likes }}</span>
+          </button>
+        </form>
+      {% else %}
+        <button class="btn btn-sm border-0 bg-transparent p-0" onclick="showLoginAlert()">
+          <i class="bi bi-bookmark" style="font-size: 1.2rem;"></i>
+        </button>
+        <button class="btn btn-sm border-0 bg-transparent p-0" onclick="showLoginAlert()">
+          <i class="bi bi-heart" style="font-size: 1.3rem;"></i>
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="mt-3">
+    <p>{{ post.content|truncatewords:25 }}</p>
+
+    {% if post.photo or post.images.all %}
+    <div class="row row-cols-3 g-2 mt-2">
+      {% if post.photo %}
+      <div class="col">
+        <a href="{{ post.photo.url }}" class="glightbox" data-gallery="post-{{ post.id }}">
+          <img src="{{ post.photo.url }}" class="img-fluid rounded" style="object-fit: cover; height: 100px; width: 100%;">
+        </a>
+      </div>
+      {% endif %}
+      {% for image in post.images.all %}
+      <div class="col">
+        <a href="{{ image.image.url }}" class="glightbox" data-gallery="post-{{ post.id }}">
+          <img src="{{ image.image.url }}" class="img-fluid rounded" style="object-fit: cover; height: 100px; width: 100%;">
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if post.video %}
+    <div class="mt-2">
+      <video controls style="max-height: 200px; width: auto; display: block; margin: 0 auto;">
+        <source src="{{ post.video.url }}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Footer -->
+  <div class="text-end mt-3">
+    {{ post.comments.count }} <i class="bi bi-chat" style="font-size: 1.3rem;"></i>
+  </div>
+
+  <!-- Clickable area -->
+  <a href="{% url 'posts:post_details' post.id %}" class="stretched-link text-decoration-none text-dark"></a>
+</div>
+{% endfor %}
+
+<script>
+  function showLoginAlert() {
+    alert("You must be a logged in user to like or bookmark posts.");
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    GLightbox({ selector: '.glightbox' });
+
+    document.querySelectorAll('.post-card').forEach(function (card) {
+      card.addEventListener('click', function (e) {
+        const isInteractive = e.target.closest('a, button, form, .glightbox, .like-btn, .bookmark-btn, video');
+        if (!isInteractive) {
+          const url = this.getAttribute('data-url');
+          window.location.href = url;
+        }
+      });
+    });
+  });
+</script>

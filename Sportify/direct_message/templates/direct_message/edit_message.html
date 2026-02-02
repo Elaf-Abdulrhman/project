@@ -1,0 +1,12 @@
+{% extends "main/base.html" %}
+{% block content %}
+  <div class="container mt-5">
+    <h4>Edit Message</h4>
+    <form method="post">
+      {% csrf_token %}
+      <textarea name="content" class="form-control" rows="4">{{ message.content }}</textarea>
+      <button type="submit" class="btn btn-primary mt-3">Save</button>
+      <a href="{% url 'direct_message:chat_page' username=message.recipient.username %}" class="btn btn-secondary mt-3">Cancel</a>
+    </form>
+  </div>
+{% endblock %}

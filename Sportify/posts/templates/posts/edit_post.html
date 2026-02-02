@@ -1,0 +1,66 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Edit Post | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-sm p-4 mx-auto" style="max-width: 600px;">
+    <h4 class="mb-3 text-center">Edit Your Post</h4>
+
+    <div class="d-flex align-items-center mb-4">
+      <!-- Profile Photo -->
+    {% if request.user.athlete and request.user.athlete.profilePhoto %}
+    <!-- Athlete's Profile Photo -->
+    <img src="{{ request.user.athlete.profilePhoto.url }}" alt="Profile Photo" 
+         class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+{% elif request.user.club and request.user.club.photo %}
+    <!-- Club's Profile Photo -->
+    <img src="{{ request.user.club.photo.url }}" alt="Profile Photo" 
+         class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+{% else %}
+    <!-- Default Profile Photo -->
+    <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo" 
+         class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+{% endif %}
+      <div>
+        <strong>{{ request.user.first_name|default:"Your name" }}</strong><br>
+        <small class="text-muted">@{{ request.user.username }}</small>
+      </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="mb-4">
+        <textarea
+          name="content"
+          id="id_content"
+          class="form-control shadow-sm border-0 rounded-4 p-3"
+          rows="4"
+          placeholder="Edit your thoughts..."
+          required
+        >{{ form.instance.content }}</textarea>
+      </div>
+
+      <div class="mb-3 d-flex gap-3 align-items-center">
+        <label for="id_photo" class="btn btn-outline-secondary d-flex align-items-center">
+          <i class="bi bi-image me-1"></i>
+        </label>
+        <input type="file" id="id_photo" name="photo" accept="image/*" class="d-none">
+
+        <label for="id_video" class="btn btn-outline-secondary d-flex align-items-center">
+          <i class="bi bi-camera-video me-1"></i>
+        </label>
+        <input type="file" id="id_video" name="video" accept="video/*" class="d-none">
+      </div>
+
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a href="{% url 'posts:post_details' post.id %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

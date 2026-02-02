@@ -29,14 +29,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-dtm56)$@mucw8zj=(6m25m1nd83aiuqut=fw#+v1k^9wkl=+6o'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = [
-    ".vercel.app",
-    "localhost",
-    "127.0.0.1",
-]
 
 
 # Application definition
@@ -141,8 +138,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 
 # Media files
@@ -155,6 +152,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media' )
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Moyasar settings ()
+MOYASAR_PUBLISHABLE_KEY = 'pk_test_wJ4i6psLToc8uJ2J3PFADniiS16MFzhhcDZ86Kk9'
+MOYASAR_SECRET_KEY = 'sk_test_sF2ML8JKf8QhAL7mrtVBrgXs5p4tjKvVrhFXLJG1'
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
@@ -162,8 +163,3 @@ EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
 EMAIL_HOST_USER = '99de0f668b3ead'
 EMAIL_HOST_PASSWORD = '741b91197d9c9a'
 EMAIL_PORT = '2525'
-
-try:
-    from .local_settings import *
-except ImportError:
-    pass

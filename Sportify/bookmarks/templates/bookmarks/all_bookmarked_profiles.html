@@ -1,0 +1,46 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% block title %}My Bookmarked Profiles{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">My Bookmarked Profiles</h2>
+    <div class="row">
+        {% for bookmark in bookmarks %}
+        <div class="col-md-4 mb-4">
+            <div class="card text-center">
+                <div class="card-body">
+
+                   {% if bookmark.profile.athlete and bookmark.profile.athlete.profilePhoto %}
+                <img src="{{ bookmark.profile.athlete.profilePhoto.url }}" alt="Profile Photo"
+                     class="rounded-circle me-2" style="width: 70px; height: 70px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+            {% elif bookmark.profile.club and bookmark.profile.club.photo %}
+                <img src="{{ bookmark.profile.club.photo.url }}" alt="Profile Photo"
+                     class="rounded-circle me-2" style="width: 70px; height: 70px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+            {% else %}
+                <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo"
+                     class="rounded-circle me-2" style="width: 70px; height: 70px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+            {% endif %}
+                <hr>
+                {% if bookmark.profile.club %}
+                    <h5 class="card-title">@{{ bookmark.profile.username }}&nbsp;&nbsp;<i class="bi bi-patch-check-fill"></i></h5>
+                {% else %}
+                    <h5 class="card-title">@{{ bookmark.profile.username }}</h5>
+                {% endif %}
+                <p class="card-text mt-auto" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    {% if bookmark.profile.club and bookmark.profile.club.description %}
+                        {{ bookmark.profile.club.description }}
+                    {% elif bookmark.profile.athlete and bookmark.profile.athlete.bio %}
+                        {{ bookmark.profile.athlete.bio }}
+                    {% endif %}
+                    </p>
+                    <a href="{% url 'account:profile_view' bookmark.profile.id %}" class="btn btn-dark btn-sm">View Profile</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">You have not bookmarked any profiles yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

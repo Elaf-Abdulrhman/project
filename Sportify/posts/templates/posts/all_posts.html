@@ -1,0 +1,110 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}All Posts | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5 p-3" style="max-width: 900px;">
+  <h2 class="text-center mb-4">Recent Posts</h2>
+
+  <form method="get" class="row g-2 mb-4">
+    <div class="col-md-3">
+      <select name="sport" class="form-select">
+        <option value="">All Sports</option>
+        {% for sport in sports %}
+          <option value="{{ sport.id }}" {% if selected_sport == sport.id|stringformat:"s" %}selected{% endif %}>{{ sport.sport_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <select name="city" class="form-select">
+        <option value="">All Cities</option>
+        {% for city in cities %}
+          <option value="{{ city.id }}" {% if selected_city == city.id|stringformat:"s" %}selected{% endif %}>{{ city.city_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <select name="posted_by" class="form-select">
+        <option value="">All Users</option>
+        <option value="athlete" {% if selected_poster == 'athlete' %}selected{% endif %}>Athletes</option>
+        <option value="club" {% if selected_poster == 'club' %}selected{% endif %}>Clubs</option>
+      </select>
+    </div>
+
+    <div class="col-md-3 d-grid">
+      <button type="submit" class="btn btn-dark">Apply Filters</button>
+    </div>
+  </form>
+
+  {% if user.is_authenticated and not user.is_superuser %}
+    <div class="text-end mt-4 p-3">
+      <a href="{% url 'posts:add_post' %}" class="btn btn-dark">+ Add Post</a>
+    </div>
+  {% endif %}
+
+  <div id="posts-container">
+    {% include 'posts/post_card.html' %}
+  </div>
+
+  <div id="loading-spinner" class="text-center my-4" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  {% if not posts %}
+    <p class="text-center">No posts available yet.</p>
+  {% endif %}
+</div>
+<script>
+  let currentPage = 1;
+  let hasNextPage = true;
+  const postsContainer = document.getElementById('posts-container');
+  const loadingSpinner = document.getElementById('loading-spinner');
+  
+  const loadMorePosts = () => {
+      if (!hasNextPage) return;
+  
+      currentPage++;
+      loadingSpinner.style.display = 'block';
+  
+      const params = new URLSearchParams(window.location.search);
+      params.set('page', currentPage);
+  
+      fetch(`?${params.toString()}`, {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      })
+      .then(response => response.json())
+      .then(data => {
+          loadingSpinner.style.display = 'none';
+          
+          // Stop fetching if no more content
+          if (!data.posts_html.trim()) {
+              hasNextPage = false;
+              const endMessage = document.createElement('p');
+              endMessage.className = 'text-center mt-4';
+              endMessage.innerText = 'No more posts available.';
+              postsContainer.appendChild(endMessage);
+              return;
+          }
+  
+          postsContainer.insertAdjacentHTML('beforeend', data.posts_html);
+          hasNextPage = data.has_next;
+      })
+      .catch(error => {
+          console.error('Error loading posts:', error);
+          loadingSpinner.style.display = 'none';
+      });
+  };
+  
+  window.addEventListener('scroll', () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+          loadMorePosts();
+      }
+  });
+  </script>  
+  
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Add Post{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-sm p-4 mx-auto" style="max-width: 600px;">
+    <h4 class="mb-3 text-center">Create a New Post</h4>
+
+    <div class="d-flex align-items-center mb-4">
+    {% if request.user.athlete and request.user.athlete.profilePhoto %}
+        <img src="{{ request.user.athlete.profilePhoto.url }}" alt="Profile Photo"
+             class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+    {% elif request.user.club and request.user.club.photo %}
+        <img src="{{ request.user.club.photo.url }}" alt="Profile Photo"
+             class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+    {% else %}
+        <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo"
+             class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
+    {% endif %}
+      <div>
+      {% if request.user.club %}
+       <strong>{{ request.user.club.clubName}}&nbsp;<i class="bi bi-patch-check-fill"></i></strong><br>
+{% else %}
+        <strong>{{ request.user.first_name}}</strong><br>
+          {% endif %}
+        <small class="text-muted">@{{ request.user.username }}</small>
+      </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="mb-4">
+  <textarea name="content" id="id_content" class="form-control shadow-sm border-0 rounded-4 p-3" rows="4" placeholder="What's on your mind?" required></textarea>
+      </div>
+
+
+     <div class="mb-3">
+  <label for="id_images" class="form-label fw-bold">
+    <i class="bi bi-image me-1"></i> Upload Photos
+  </label>
+  <input type="file" name="images" id="id_images" accept="image/*" multiple class="form-control">
+</div>
+
+<div class="mb-3">
+  <label for="id_video" class="form-label fw-bold">
+    <i class="bi bi-camera-video me-1"></i> Upload a Video (optional)
+  </label>
+  {{ form.video }}
+</div>
+
+
+      <button type="submit" class="btn btn-dark w-100 mt-3">Post</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const imageInput = document.getElementById('id_images');
+  const videoInput = document.getElementById('id_video');
+
+  imageInput.addEventListener('change', function () {
+    if (this.files.length > 5) {
+      alert('You can only upload up to 5 photos.');
+      this.value = '';
+      return;
+    }
+
+    if (this.files.length > 0) {
+      videoInput.disabled = true;
+      document.getElementById('video-label').classList.add('disabled');
+    } else {
+      videoInput.disabled = false;
+      document.getElementById('video-label').classList.remove('disabled');
+    }
+  });
+
+  videoInput.addEventListener('change', function () {
+    if (this.files.length > 0) {
+      imageInput.disabled = true;
+      document.getElementById('photo-label').classList.add('disabled');
+    } else {
+      imageInput.disabled = false;
+      document.getElementById('photo-label').classList.remove('disabled');
+    }
+  });
+</script>
+{% endblock %}

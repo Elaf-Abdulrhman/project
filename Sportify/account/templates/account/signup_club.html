@@ -1,0 +1,99 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Sign up Club | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5 p-5">
+  <h3 class="text-center mb-3">Club Sign Up</h3>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="POST" enctype="multipart/form-data" class="p-3 border rounded bg-white shadow-sm">
+    {% csrf_token %}
+
+
+    <div class="mb-3 text-center">
+      <label for="id_photo" class="form-label small">Club Photo</label>
+      <input type="file" name="photo" id="id_photo" class="form-control form-control-sm mx-auto" style="max-width: 280px;">
+    </div>
+
+    <div class="row g-2">
+
+      <div class="col-md-6">
+        <label class="form-label small">Username</label>
+        <input type="text" name="username" id="id_username" class="form-control form-control-sm" required>
+      </div>
+
+
+      <div class="col-md-6">
+        <label class="form-label small">Email</label>
+        <input type="email" name="email" id="id_email" class="form-control form-control-sm" required>
+      </div>
+
+
+      <div class="col-md-6">
+        <label for="id_password1" class="form-label small">Password</label>
+        <input type="password" name="password1" id="id_password1" class="form-control form-control-sm" required>
+        <small class="text-muted">
+          * Your password can't be too similar to your other personal information.<br>
+          * Must be at least 8 characters.<br>
+          * Can't be a commonly used password.<br>
+          * Can't be entirely numeric.
+        </small>
+      </div>
+
+
+      <div class="col-md-6">
+        <label for="id_password2" class="form-label small">Confirm Password</label>
+        <input type="password" name="password2" id="id_password2" class="form-control form-control-sm" required>
+      </div>
+
+
+      <div class="col-md-6">
+        <label class="form-label small">Club Name</label>
+        <input type="text" name="clubName" id="id_clubName" class="form-control form-control-sm" required>
+      </div>
+
+
+      <div class="col-md-6">
+        <label class="form-label small">Phone Number</label>
+        <input type="text" name="phoneNumber" id="id_phoneNumber" class="form-control form-control-sm" required>
+      </div>
+
+
+      <div class="col-md-6">
+        <label class="form-label small">Sport</label>
+        <select name="sport" id="id_sport" class="form-select form-select-sm" required>
+          <option value="" disabled selected>Select a sport</option>
+          {% for sport in club_form.fields.sport.queryset %}
+            <option value="{{ sport.id }}">{{ sport.sport_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+
+      <div class="col-md-6">
+        <label class="form-label small">City</label>
+        <select name="city" id="id_city" class="form-select form-select-sm" required>
+          <option value="" disabled selected>Select a city</option>
+          {% for city in club_form.fields.city.queryset %}
+            <option value="{{ city.id }}">{{ city.city_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+
+      <div class="col-md-12">
+        <label class="form-label small">About the Club</label>
+        <textarea name="description" id="id_description" class="form-control form-control-sm" rows="4" required></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-dark w-100 mt-3">Sign Up</button>
+  </form>
+</div>
+{% endblock %}

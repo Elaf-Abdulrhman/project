@@ -1,0 +1,28 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Plus Plan | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center text-primary">Plus Plan</h1>
+    <p class="text-center text-muted">Upgrade to the Plus Plan and enjoy exclusive benefits!</p>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="card-title text-center">What You Get</h3>
+                    <ul class="list-group list-group-flush mt-3">
+                        <li class="list-group-item">✔ Post unlimted offers per week</li>
+                        <li class="list-group-item">✔ Early access to new features</li>
+                    </ul>
+                    <div class="text-center mt-4">
+                        <h4 class="text-success">299 SAR/month</h4>
+                        <a href="{% url 'subscriptions:payment'%}" class="btn btn-primary btn-lg mt-3">Subscribe Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

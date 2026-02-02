@@ -1,0 +1,44 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ club.clubName }}'s Offers{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">{{ club.clubName }}'s Offers</h2>
+
+    {% if request.user == club.user %}
+    <div class="d-flex justify-content-start gap-3 p-3">
+        <a href="{% url 'offers:add_offer' %}" class="btn btn-dark px-4"><i class="bi bi-plus-lg"></i> Add a New Offer</a>
+        <a href="{% url 'subscriptions:plus_plan' %}" class="btn btn-outline-dark px-4">Upgrade</a>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        {% for offer in offers %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if offer.photo %}
+                    <img src="{{ offer.photo.url }}" class="card-img-top" alt="{{ offer.title }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ offer.title }}</h5>
+                    <p class="card-text">{{ offer.content|truncatewords:20 }}</p>
+                    <p class="text-muted small">Posted: {{ offer.created_at|date:"M d, Y" }}</p>
+                    <a href="{% url 'offers:offer_details' offer.id %}" class="btn btn-sm btn-dark mt-auto">View Details</a>
+                </div>
+                {% if request.user == club.user %}
+                <div class="card-footer d-flex flex-wrap justify-content-between gap-2">
+                    <a href="{% url 'offers:edit_offer' offer.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a href="{% url 'offers:delete_offer' offer.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    <a href="{% url 'offers:offer_applicants' offer.id %}" class="btn btn-sm btn-outline-info">View Applicants</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">No offers available for this club.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
