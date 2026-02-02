@@ -1,0 +1,401 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Home | Sportify{% endblock %}
+{% load static %}
+
+{% block content %}
+<style>
+.card:hover {
+    transform: translateY(-8px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+.pause-animation {
+  animation-play-state: paused !important;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+p {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+
+body {
+  font-family: "Archivo", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 89.8;
+
+
+}
+@keyframes scroll {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.scrolling-wrapper {
+  display: flex;
+  animation: scroll 30s linear infinite;
+  width: max-content;
+}
+
+.club-photo-wrapper {
+  position: relative;
+  flex: 0 0 auto;
+  margin: 0 1.5rem 2rem;
+  text-align: center;
+}
+
+.club-photo-wrapper img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 3px solid #ccc;
+  background-color: white;
+  padding: 20px;
+  transition: transform 0.3s;
+}
+
+.club-photo-wrapper:hover img {
+  transform: scale(1.05);
+}
+
+.club-hover-name {
+  margin-top: 0.5rem;
+  font-weight: bold;
+}
+
+.club-photo-wrapper {
+  position: relative;
+}
+
+.clubs-scroll-container {
+  position: relative;
+}
+.btn.transition:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.2);
+}
+
+.bg-cover {
+    background-size: cover;
+  }
+  .bg-center {
+    background-position: center;
+  }
+  .athlete-card:hover .position-absolute {
+    background: rgba(0, 0, 0, 0.75);
+    transition: background 0.3s ease;
+  }
+
+
+  .hero-section {
+    position: relative;
+    height: 75vh; 
+    display: flex;
+    overflow: hidden;
+  }
+
+  .hero-img {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.7);
+  }
+
+  .hero-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1;
+  }
+
+  .hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    text-align: center;
+    color: white;
+    max-width: 900px;
+    padding: 0 1rem;
+  }
+
+  .hero-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+  }
+
+  .hero-content p {
+    font-size: 1.15rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-content .btn-warning {
+    background-color: orange;
+    border: none;
+    font-weight: 600;
+  }
+
+  .text-slide {
+    display: none;
+    animation: fadeIn 1s ease-in-out forwards;
+  }
+
+  .text-slide.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+</style>
+
+<div class="hero-section">
+  <!-- Background Images -->
+  <div class="hero-img" style="background-image: url('{% static 'images/1.jpg' %}');"></div>
+  <div class="hero-img" style="background-image: url('{% static 'images/2.jpg' %}');"></div>
+  <div class="hero-img" style="background-image: url('{% static 'images/3.jpg' %}');"></div>
+
+  <!-- Overlay -->
+  <div class="hero-overlay"></div>
+
+  <!-- Centered Text -->
+  <div class="hero-content">
+    <div id="slide1" class="text-slide active">
+      <small class="text-uppercase"></small>
+      <h1>SPORTIFY</h1>
+        <hr>
+      <p style="color: white">The all-in-one networking hub uniting football, basketball, volleyball, and tennis — where athletic dreams meet real-world opportunities.</p>
+    </div>
+
+    <div id="slide2" class="text-slide">
+      <small class="text-uppercase">FOR CLUBS & SCOUTS</small>
+      <h1>BUILD YOUR FUTURE TEAM</h1>
+      <p style="color: white">Discover multi-sport talent in one place — connect, evaluate, and recruit the next generation of champions effortlessly.</p>
+    </div>
+
+    <div id="slide3" class="text-slide">
+      <small class="text-uppercase">FOR ATHLETES</small>
+      <h1>SHOWCASE YOUR SKILLS</h1>
+      <p style="color: white">Create your profile, get seen by real clubs, and take the next step in your athletic journey — Sportify is your stage.</p>
+    </div>
+
+
+    <a href="#" class="btn btn-warning btn-lg me-3 px-4 py-2">Sign Up Now</a>
+    <a href="#" class="btn btn-outline-light btn-lg px-4 py-2">Get To Know Us</a>
+  </div>
+</div>
+
+<div class="clubs-section py-5">
+  <div class="container text-center">
+    <h2 class="mb-4">Explore Our Clubs</h2>
+    <div class="clubs-scroll-container position-relative">
+
+      <div class="scrolling-wrapper" id="scrollingWrapper">
+        {% for club in clubs %}
+  <a href="{% url 'account:profile_view' club.user.id %}" class="club-photo-wrapper"
+     data-club-name="{{ club.user.clubName }}"
+     data-username="{{ club.user.username }}">
+    <img src="{% if club.photo %}{{ club.photo.url }}{% else %}{% static 'images/profile.png' %}{% endif %}" alt="Club Photo">
+    <div class="club-hover-name">{{ club.user.clubName }}</div>
+    <div class="club-info-tooltip">
+      <strong>{{ club.user.club.clubName }}&nbsp;<i class="bi bi-patch-check-fill"></i></strong><br>
+      <span class="username">@{{ club.user.username }}</span>
+        <br>
+        <small class="text-muted">{{ club.user.club.description }}</small>
+    </div>
+  </a>
+{% endfor %}
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="athletes-section py-5" style="background-color: #f9f9f9;">
+  <div class="container">
+    <h2 class="mb-4 fw-bold text-dark">Meet the Athletes</h2>
+    <div class="row g-4">
+      {% for athlete in athletes %}
+      {% if not athlete.isPrivate %}
+      <div class="col-md-4">
+  <div class="card h-100 text-center shadow-sm">
+    <a href="{% url 'account:profile_view' athlete.user.id %}" class="text-decoration-none">
+      <img src="{% if athlete.profilePhoto %}{{ athlete.profilePhoto.url }}{% else %}{% static 'images/profile.png' %}{% endif %}"
+           alt="{{ athlete.user.username }}"
+           class="card-img-top rounded-circle mx-auto mt-4"
+           style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #eee;">
+      <div class="card-body">
+        <h5 class="card-title">{{ athlete.user.first_name }}</h5>
+        <p class="text-muted mb-1">@{{ athlete.user.username }}</p>
+        <p class="card-text small">{{ athlete.bio|truncatewords:15 }}</p>
+      </div>
+    </a>
+  </div>
+</div>
+
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+
+
+<div class="posts-section" style="padding: 2rem;">
+  <div class="container">
+    <h2 class="text-left mb-4">Latest Posts</h2>
+    <div class="row">
+      {% for post in latest_posts %}
+      <div class="col-md-6 mb-4">
+        <div class="card d-flex flex-row align-items-center p-3 position-relative">
+          <div class="me-3 position-relative" style="z-index: 2;">
+            <a href="{% url 'account:profile_view' post.user.id %}" class="text-decoration-none d-flex align-items-center text-dark">
+              {% if post.user.athlete and post.user.athlete.profilePhoto %}
+                <img src="{{ post.user.athlete.profilePhoto.url }}" alt="Profile Photo"
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+              {% elif post.user.club and post.user.club.photo %}
+                <img src="{{ post.user.club.photo.url }}" alt="Profile Photo"
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+              {% else %}
+                <img src="{% static 'images/profile.png' %}" alt="Default Profile Photo"
+                     class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+              {% endif %}
+            </a>
+          </div>
+          <div class="position-relative" style="z-index: 2;">
+            <a href="{% url 'account:profile_view' post.user.id %}" class="link-secondary link-underline-opacity-0 link-underline-opacity-75-hover">
+              <h5 class="mb-1 text-dark">{{ post.user }}</h5>
+              <h6 class="card-title mb-2">@{{ post.user.username }}</h6>
+            </a>
+            <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+            <p class="card-text"><small class="text-muted">{{ post.created_at|date:"F j, Y" }}</small></p>
+          </div>
+
+          <!-- Full card click to post details -->
+          <a href="{% url 'posts:post_details' post.id %}" class="stretched-link" style="z-index: 1;"></a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="{% url 'posts:all_posts' %}"
+         class="btn btn-dark px-4 py-2 fs-5 rounded-pill shadow-sm transition"
+         style="transition: all 0.3s ease;">
+        View All Posts &rarr;
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.text-slide');
+  const container = document.querySelector('.hero-content');
+  let current = 0;
+  let interval = null;
+
+  function showNextSlide() {
+    slides[current].classList.remove('active');
+    current = (current + 1) % slides.length;
+    slides[current].classList.add('active');
+  }
+
+  function startRotation() {
+    interval = setInterval(showNextSlide, 3000);
+  }
+
+  function stopRotation() {
+    clearInterval(interval);
+  }
+
+  container.addEventListener('mouseenter', stopRotation);
+  container.addEventListener('mouseleave', startRotation);
+
+  // Start the rotation initially
+  startRotation();
+</script>
+
+<style>
+  .club-photo-wrapper {
+  position: relative;
+  flex: 0 0 auto;
+  margin: 0 1.5rem 2rem;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.club-photo-wrapper img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 50%;
+  background-color: white;
+  padding: 20px;
+  transition: transform 0.3s;
+}
+
+.club-photo-wrapper:hover img {
+  transform: scale(1.05);
+}
+
+.club-hover-name {
+  margin-top: 0.5rem;
+  font-weight: bold;
+}
+
+.club-info-tooltip {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #f8f9fa;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 0.5rem;
+  z-index: 10;
+}
+
+.club-photo-wrapper:hover .club-info-tooltip {
+  display: block;
+}
+
+.club-info-tooltip .username {
+  color: #888;
+  font-size: 13px;
+}
+.clubs-scroll-container:hover .scrolling-wrapper {
+  animation-play-state: paused;
+}
+
+</style>
+
+
+
+{% endblock %}
+
+

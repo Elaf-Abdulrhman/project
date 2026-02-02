@@ -1,0 +1,135 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Sign up Athlete | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5 p-5">
+  <h3 class="text-center mb-3">Athlete Sign Up</h3>
+  <form method="POST" enctype="multipart/form-data" class="p-3 border rounded bg-white shadow-sm">
+    {% csrf_token %}
+
+    <div class="mb-3 text-center">
+      <label for="id_profilePhoto" class="form-label small">Profile Photo</label>
+      <input type="file" name="profilePhoto" id="id_profilePhoto" class="form-control form-control-sm mx-auto" style="max-width: 280px;">
+    </div>
+
+    <div class="row g-2">
+      <div class="col-md-6">
+        <label  class="form-label small">First Name </label>
+        <input type="text" name="first_name" id="id_first_name" class="form-control form-control-sm" required>
+      </div>
+      <div class="col-md-6">
+        <label  class="form-label small">Last Name </label>
+        <input type="text" name="last_name" id="id_last_name" class="form-control form-control-sm" required>
+      </div>
+
+      <div class="col-md-6">
+        <label  class="form-label small">Username </label>
+        <input type="text" name="username" id="id_username" class="form-control form-control-sm" required>
+      </div>
+      <div class="col-md-6">
+        <label  class="form-label small">Email </label>
+        <input type="email" name="email" id="id_email" class="form-control form-control-sm" required>
+      </div>
+
+      <div class="col-md-6">
+        <label  class="form-label small">Phone </label>
+        <input type="text" name="phoneNumber" id="id_phoneNumber" class="form-control form-control-sm" required>
+      </div>
+      <div class="col-md-6">
+        <label  class="form-label small">DOB </label>
+        <input type="date" name="dateOfBirth" id="id_dateOfBirth" class="form-control form-control-sm" required>
+      </div>
+
+      <div class="col-md-6">
+        <label for="id_password1" class="form-label small">Password </label>
+        <input type="password" name="password1" id="id_password1" class="form-control form-control-sm" required>
+          <small class="text-muted">
+              * Your password can't be too similar to your other personal information.<br>
+              * Your password must contain at least 8 characters.<br>
+              * Your password can't be a commonly used password.<br>
+              * Your password can't be entirely numeric.
+         </small>
+      </div>
+        <div class="col-md-6">
+        <label for="id_password2" class="form-label small">Confirm Password </label>
+        <input type="password" name="password2" id="id_password2" class="form-control form-control-sm" required>
+      </div>
+
+      <div class="col-md-6">
+        <label  class="form-label small">Sport </label>
+        <select name="sport" id="id_sport" class="form-select form-select-sm" required>
+          {% for sport in athlete_form.fields.sport.queryset %}
+            <option value="{{ sport.id }}">{{ sport.sport_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label  class="form-label small">Playing Position</label>
+        <input type="text" name="playingPosition" id="id_playingPosition" class="form-control form-control-sm">
+      </div>
+
+      <div class="col-md-6">
+        <label  class="form-label small">Height (cm)</label>
+        <input type="number" name="height" id="id_height" class="form-control form-control-sm">
+      </div>
+      <div class="col-md-6">
+        <label  class="form-label small">Weight (kg)</label>
+        <input type="number" name="weight" id="id_weight" class="form-control form-control-sm">
+      </div>
+
+      <div class="col-md-6">
+        <label  class="form-label small">Gender </label>
+        <select name="gender" id="id_gender" class="form-select form-select-sm" required>
+          <option value="M">Male</option>
+          <option value="F">Female</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label small d-block">Availability</label>
+        <div class="form-check form-check-inline">
+          <input type="radio" name="isAvailable" value="True" class="form-check-input" checked>
+          <label class="form-check-label small">Available</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="radio" name="isAvailable" value="False" class="form-check-input">
+          <label class="form-check-label small">Unavailable</label>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label small d-block">Profile</label>
+        <div class="form-check form-check-inline">
+          <input type="radio" name="isPrivate" value="False" class="form-check-input" checked>
+          <label class="form-check-label small">Public</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="radio" name="isPrivate" value="True" class="form-check-input">
+          <label class="form-check-label small">Private</label>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <label  class="form-label small">City </label>
+        <select name="city" id="id_city" class="form-select form-select-sm" required>
+          {% for city in athlete_form.fields.city.queryset %}
+            <option value="{{ city.id }}">{{ city.city_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label  class="form-label small">About Me (Bio)</label>
+        <textarea name="bio" id="id_bio" rows="3" class="form-control form-control-sm" required></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label small">Achievements</label>
+        <textarea name="achievements" id="id_achievements" rows="3" class="form-control form-control-sm" required></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-dark w-100 mt-3">Sign up</button>
+  </form>
+</div>
+{% endblock %}

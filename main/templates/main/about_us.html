@@ -1,0 +1,82 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}About Us | Sportify{% endblock %}
+
+{% block content %}
+
+<section class="text-center py-5" style="background-image: url('{% static 'images/c.jpg' %}'); background-size: cover; background-position: center;">
+  <div class="bg-black bg-opacity-75 py-5">
+    <h1 class="display-4 fw-bold text-warning">Welcome to Sportify</h1>
+    <p class="lead text-white">Where athletes and clubs connect, grow, and thrive together.</p>
+  </div>
+</section>
+
+<div class="container py-5">
+  <div class="row align-items-center mb-5">
+    <div class="col-md-6">
+      <img src="{% static 'images/football.jpg' %}" class="img-fluid rounded shadow" alt="Sportify Team">
+    </div>
+    <div class="col-md-6 text-white">
+      <h2 class="text-warning mb-3">Our Mission</h2>
+      <p class="text-dark mb-3">
+        At Sportify, we believe that talent should never go undiscovered. We built this platform to help athletes showcase their skills and clubs discover the right fit with ease and confidence.
+      </p>
+    </div>
+  </div>
+
+  <div class="row align-items-center flex-md-row-reverse mb-5">
+    <div class="col-md-6">
+      <img src="{% static 'images/tenniss.jpg' %}" class="img-fluid rounded shadow" alt="Sport Vision">
+    </div>
+    <div class="col-md-6 text-white">
+      <h2 class="text-warning mb-3">Our Vision</h2>
+      <p class="text-dark mb-3">
+        A world where athletic potential meets the right opportunity — without complexity or gatekeeping.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="text-center mb-5">
+    <h2 class="text-warning">Meet the Team</h2>
+    <p class="text-muted">The people Behind Sportify.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="card bg-dark text-center p-4 border-0">
+        <a href="https://www.linkedin.com/in/elaf-alshanqiti/" target="_blank" class="text-white mt-3" style="text-decoration: none;">
+          <img src="{% static 'images/logo_elaf.jpeg' %}" class="rounded-circle mx-auto mb-3" width="120" height="120" alt="Team Member">
+          <h5 class="text-white">Elaf Alshanqiti</h5>
+        </a>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card bg-dark text-center p-4 border-0">
+        <a href="https://www.linkedin.com/in/dhuha-alshehri-84382b2b9/" target="_blank" class="text-white mt-3" style="text-decoration: none;">
+          <img src="{% static 'images/duha1.png' %}" class="rounded-circle mx-auto mb-3" width="120" height="120" alt="Team Member">
+          <h5 class="text-white">Duha Alshehri</h5>
+        </a>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card bg-dark text-center p-4 border-0">
+        <a href="https://www.linkedin.com/in/ghaida-al-yahya/" target="_blank" class="text-white mt-3" style="text-decoration: none;">
+          <img src="{% static 'images/ghaida.jpg' %}" class="rounded-circle mx-auto mb-3" width="120" height="120" alt="Team Member">
+          <h5 class="text-white">Ghaida Alyahya</h5>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<div class="text-center py-5 bg-dark">
+  <h2 class="text-warning mb-3">Join Us</h2>
+  <p class="text-white">Whether you're scouting or showcasing — Sportify is your home turf.</p>
+  <a href="{% url 'account:login_view' %}" class="btn btn-warning btn-lg mt-3">Get Started</a>
+</div>
+
+{% endblock %}

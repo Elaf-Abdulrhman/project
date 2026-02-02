@@ -1,0 +1,60 @@
+<!-- templates/subscriptions/payment.html -->
+
+{% extends 'main/base.html' %}
+
+{% block title %}Payment | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+  <h1>Subscribe to Plus Plan</h1>
+  <p>Pay 299 SAR to subscribe.</p>
+
+  <div class="mysr-form"></div>
+
+  <script src="https://cdn.moyasar.com/v1/moyasar.js"></script>
+  <script>
+    window.Moyasar.init({
+      element: '.mysr-form',
+      amount: 29900,  // Amount in halalas (29900 halalas = 299 SAR)
+      currency: 'SAR',
+      description: 'Plus Plan Subscription',
+      publishable_api_key: '{{ moyasar_publishable_key }}',
+      callback_url: 'http://127.0.0.1:8000/subscriptions/payment_success/',
+      methods: ['creditcard'],
+      onSuccess: function(payment) {
+        console.log("Payment Success:", payment);
+        alert("Payment completed successfully!");
+
+        // Send payment ID to the backend to save and verify the payment
+        const paymentId = payment.id;
+
+        fetch(`/subscriptions/payment_success/?id=${paymentId}`)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log("Backend Response:", data); // Debugging
+            if (data.status === 'paid') {
+              window.location.href = '/subscriptions/payment_success/';
+            } else {
+              alert('Payment failed, please try again.');
+              window.location.href = '/subscriptions/payment_failed/';
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while verifying the payment.');
+            window.location.href = '/subscriptions/payment_failed/';
+          });
+      },
+      onError: function(error) {
+        console.error('Payment Error:', error);
+        alert('Payment Failed: ' + error.message);
+      }
+    });
+  </script>
+</div>
+{% endblock %}

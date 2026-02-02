@@ -1,0 +1,165 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}All Offers | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 900px">
+    <h2 class="fw-bold mb-4">All Offers</h2>
+<form method="get" class="mb-4">
+    <div class="row g-2">
+        <div class="col-md-4">
+            <select name="city" class="form-select">
+                <option value="">All Cities</option>
+                {% for city in cities %}
+                    <option value="{{ city.id }}" {% if city.id|stringformat:"s" == request.GET.city %}selected{% endif %}>
+                        {{ city.city_name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select name="sport" class="form-select">
+                <option value="">All Sports</option>
+                {% for sport in sports %}
+                    <option value="{{ sport.id }}" {% if sport.id|stringformat:"s" == request.GET.sport %}selected{% endif %}>
+                        {{ sport.sport_name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <select name="gender" class="form-select">
+                <option value="">All Genders</option>
+                <option value="M" {% if request.GET.gender == 'M' %}selected{% endif %}>Male</option>
+                <option value="F" {% if request.GET.gender == 'F' %}selected{% endif %}>Female</option>
+            </select>
+        </div>
+    </div>
+    <div class="text-end mt-3">
+        <button type="submit" class="btn btn-dark">Filter</button>
+    </div>
+</form>
+
+    {% if user.is_authenticated %}
+        <div class="mb-4 d-flex flex-wrap gap-2">
+            {% if user.athlete %}
+                <a href="{% url 'offers:my_applications' %}" class="btn btn-outline-secondary"><i class="bi bi-file-post-fill"></i> My Applications</a>
+            {% elif user.club %}
+                <a href="{% url 'offers:my_offers' user.club.id %}" class="btn btn-outline-dark"><i class="bi bi-journal-richtext"></i> My Offers</a>
+            {% endif %}
+            {% if user.club %}
+                <a href="{% url 'offers:add_offer' %}" class="btn btn-dark"><i class="bi bi-plus-lg"></i> Add New Offer</a>
+                <a href="{% url 'subscriptions:plus_plan' %}" class="btn btn-outline-dark">Upgrade</a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div class="row" id="offers-container">
+        {% for offer in offers %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="d-flex align-items-center gap-3 p-3 border-bottom">
+                    <img src="{{ offer.user.club.photo.url }}" alt="Profile Photo"
+                         class="rounded-circle me-2"
+                         style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+                    <div>
+                        <strong>{{ offer.user.club.clubName}} </strong><i class="bi bi-patch-check-fill"></i><br>
+                        <a href="{% url 'account:profile_view' offer.user.id %}" class="text-muted text-decoration-none">
+                                @{{ offer.user.username }}
+                            </a>
+                    </div>
+                </div>
+
+                {% if offer.photo %}
+                <img src="{{ offer.photo.url }}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="{{ offer.title }}">
+                {% endif %}
+
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ offer.title }}</h5>
+                    <p class="card-text">{{ offer.content|truncatewords:20 }}</p>
+
+
+
+                 <div class="text-start text-muted small mt-2">
+            <i class="bi bi-trophy"></i>{{ offer.user.club.sport }}
+            <i class="bi bi-gender-ambiguous"></i>
+                        {% if offer.gender == 'M' %}Male{% elif offer.gender == 'F' %}Female{% else %}All{% endif %}
+        </div>
+
+
+
+<small class="text-muted">Posted on {{ offer.created_at|date:"M d, Y" }}</small>
+                    <div class="mt-auto pt-3">
+                        <a href="{% url 'offers:offer_details' offer.id %}" class="btn btn-sm btn-outline-dark w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="loading-spinner" class="text-center my-4" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1;
+const offersContainer = document.getElementById('offers-container');
+const loadingSpinner = document.getElementById('loading-spinner');
+
+const loadMoreOffers = () => {
+    currentPage++;
+    loadingSpinner.style.display = 'block';
+
+    fetch(`?page=${currentPage}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        loadingSpinner.style.display = 'none';
+        data.offers.forEach(offer => {
+            const cardHTML = `
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="d-flex align-items-center gap-3 p-3 border-bottom">
+                            <img src="${offer.club_photo_url || '/static/images/default_profile.png'}"
+                                 alt="Profile Photo"
+                                 class="rounded-circle me-2"
+                                 style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #ccc;">
+                            <div>
+                                <strong>${offer.first_name} ${offer.last_name}</strong><br>
+                                <a href="/account/profile/${offer.club_id}/" class="text-muted text-decoration-none">@${offer.author}</a>
+                            </div>
+                        </div>
+                        ${offer.photo_url ? `<img src="${offer.photo_url}" class="card-img-top" style="height: 180px; object-fit: cover;">` : ''}
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">${offer.title}</h5>
+                            <p class="card-text">${offer.content.slice(0, 120)}...</p>
+                            <small class="text-muted">Posted on ${offer.created_at}</small>
+                            <div class="mt-auto pt-3">
+                                <a href="/offers/offer/${offer.id}/" class="btn btn-sm btn-outline-primary w-100">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            offersContainer.insertAdjacentHTML('beforeend', cardHTML);
+        });
+    })
+    .catch(error => {
+        loadingSpinner.style.display = 'none';
+        console.error('Error loading offers:', error);
+    });
+};
+
+window.addEventListener('scroll', () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        loadMoreOffers();
+    }
+});
+</script>
+{% endblock %}

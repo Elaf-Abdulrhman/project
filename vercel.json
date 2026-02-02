@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "Sportify/wsgi.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "Sportify/wsgi.py"
+    }
+  ]
+}

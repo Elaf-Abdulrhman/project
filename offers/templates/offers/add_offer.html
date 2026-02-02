@@ -1,0 +1,63 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Add Offer | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Add New Offer</h2>
+    <form method="POST" enctype="multipart/form-data" class="card p-4 shadow mx-auto" style="max-width: 600px;">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ form.title.value|default_if_none:'' }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="content" class="form-label">Content</label>
+            <textarea class="form-control" id="content" name="content" rows="5" required>{{ form.content.value|default_if_none:'' }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="photo" class="form-label">Image</label>
+            <input type="file" class="form-control" id="photo" name="photo">
+        </div>
+        <div class="mb-3">
+            <label for="gender" class="form-label">Target Gender</label>
+            <select name="gender" class="form-select" id="gender" required>
+                <option value="A" {% if form.gender.value == 'A' %}selected{% endif %}>All</option>
+                <option value="M" {% if form.gender.value == 'M' %}selected{% endif %}>Male</option>
+                <option value="F" {% if form.gender.value == 'F' %}selected{% endif %}>Female</option>
+            </select>
+        </div>
+    <div class="mb-3">
+    <label for="date" class="form-label">Tryout Date & Time</label>
+    <input type="datetime-local" name="date" class="form-control" id="date"
+           value="{{ form.date.value|default_if_none:'' }}">
+</div>
+    <div class="mb-3">
+    <label for="location" class="form-label">Location</label>
+    <input type="text" name="location" class="form-control" id="location"
+           value="{{ form.location.value|default_if_none:'' }}">
+</div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">Email (Optional)</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ form.email.value|default_if_none:'' }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="url" class="form-label">Website (Optional)</label>
+            <input type="url" class="form-control" id="url" name="url" value="{{ form.url.value|default_if_none:'' }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="phone_number" class="form-label">Phone Number (Optional)</label>
+            <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ form.phone_number.value|default_if_none:'' }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Submit Offer</button>
+    </form>
+</div>
+{% endblock %}

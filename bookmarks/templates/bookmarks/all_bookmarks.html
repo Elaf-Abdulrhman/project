@@ -1,0 +1,127 @@
+{% extends 'main/base.html' %}
+
+{% block title %}My Bookmarks | Sportify{% endblock %}
+
+{% block content %}
+<div class="container mt-5 p-3" style="max-width: 900px;">
+  <h2 class="mb-4 text-center">Bookmarked Posts</h2>
+
+
+  <div id="posts-container" >
+    {% for bookmark in bookmarks %}
+      <div class="col-md-4 mb-4" style="max-width: 500px; margin: 0 auto;">
+        <div class="card h-100 shadow-sm">
+          <!-- Post Image -->
+          {% if bookmark.post.photo %}
+            <img src="{{ bookmark.post.photo.url }}" class="card-img-top" alt="Post Image">
+          {% endif %}
+          <div class="card-body">
+            <!-- User Info -->
+            <div class="d-flex align-items-center mb-3">
+              {% if bookmark.post.user.profile.image %}
+                <img src="{{ bookmark.post.user.profile.image.url }}" alt="Profile Image" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+              {% else %}
+                <img src="#" alt="Default Profile" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+              {% endif %}
+              <span class="fw-bold">{{ bookmark.post.user.username }}</span>
+            </div>
+            
+            <!-- Post Info -->
+            <h5 class="card-title">{{ bookmark.post.content|truncatewords:10 }}</h5>
+
+            <!-- Likes, Comments, and Bookmark -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <!-- Like/Unlike -->
+              {% if bookmark.post %}
+              <form action="{% url 'bookmarks:bookmark_post' bookmark.post.id %}" method="POST" class="d-inline">
+                {% csrf_token %}
+                {% if bookmark.post in bookmarked_posts %}
+                  <button type="submit" class="btn btn-sm text-primary border-0 bg-transparent p-0">
+                    <i class="bi bi-bookmark-fill"></i>
+                  </button>
+                {% else %}
+                  <button type="submit" class="btn btn-sm text-muted border-0 bg-transparent p-0">
+                    <i class="bi bi-bookmark"></i>
+                  </button>
+                {% endif %}
+              </form>
+            {% endif %}
+
+
+              <!-- Comments -->
+              <div>
+                <i class="bi bi-chat text-primary"></i> {{ bookmark.post.comments.count }}
+              </div>
+
+              <!-- Bookmark/Unbookmark -->
+              <form action="{% url 'bookmarks:bookmark_post' bookmark.post.id %}" method="POST" class="d-inline">
+                {% csrf_token %}
+                {% if bookmark.post in bookmarked_posts %}
+                  <button type="submit" class="btn btn-sm text-primary border-0 bg-transparent p-0">
+                    <i class="bi bi-bookmark-fill"></i>
+                  </button>
+                {% else %}
+                  <button type="submit" class="btn btn-sm text-muted border-0 bg-transparent p-0">
+                    <i class="bi bi-bookmark"></i>
+                  </button>
+                {% endif %}
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted text-center">You have no bookmarks yet.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Loading Spinner -->
+  <div id="loading-spinner" class="text-center my-4" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentPage = 1;
+let hasNextPage = true;
+const postsContainer = document.getElementById('posts-container');
+const loadingSpinner = document.getElementById('loading-spinner');
+
+const loadMorePosts = () => {
+    if (!hasNextPage) return;
+
+    currentPage++;
+    loadingSpinner.style.display = 'block';
+
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', currentPage);
+
+    fetch(`?${params.toString()}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        loadingSpinner.style.display = 'none';
+        postsContainer.insertAdjacentHTML('beforeend', data.posts_html);
+
+        if (!data.has_next) {
+            hasNextPage = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading posts:', error);
+        loadingSpinner.style.display = 'none';
+    });
+};
+
+window.addEventListener('scroll', () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        loadMorePosts();
+    }
+});
+</script>
+{% endblock %}

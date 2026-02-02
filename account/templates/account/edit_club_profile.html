@@ -1,0 +1,90 @@
+
+
+{% extends 'main/base.html' %}
+
+{% block title %}Edit Club Profile{% endblock %}
+
+{% block content %}
+<style>
+input, select, textarea {
+    background-color: white;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    padding: 10px;
+    width: 100%;
+}
+</style>
+
+<div class="container mt-5" style="max-width: 800px;">
+    <div class="card shadow-sm p-4 bg-light rounded border-0">
+        <h2 class="text-center mb-4">Edit Your Club Profile</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Club Photo</label><br>
+                {% if form.instance.photo %}
+                    <img src="{{ form.instance.photo.url }}" alt="Club Photo"
+                         class="img-thumbnail mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                {% endif %}
+                {{ form.photo }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                {{ form.username }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                {{ form.email }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Club Name</label>
+                {{ form.clubName }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Phone Number</label>
+                {{ form.phoneNumber }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Sport</label>
+                {{ form.sport }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">City</label>
+                {{ form.city }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">About the Club</label>
+                {{ form.description }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Facebook Page URL</label>
+                {{ form.facebook }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Twitter (X) Page URL</label>
+                {{ form.twitterX }}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Instagram Page URL</label>
+                {{ form.instagram }}
+            </div>
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-dark px-5">Update Profile</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

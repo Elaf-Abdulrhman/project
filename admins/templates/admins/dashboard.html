@@ -1,0 +1,54 @@
+{% extends "main/base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Admin Dashboard</h1>
+  <div class="row mt-4">
+    <!-- Clubs & Users Section (First Row) -->
+    <div class="col-md-6 mb-4">
+      <div class="card text-center shadow-lg border-0">
+        <div class="card-body bg-light">
+          <h5 class="card-title text-primary">Clubs</h5>
+          <p class="card-text text-muted">Manage all registered clubs.</p>
+          <a href="{% url 'admin:account_club_changelist' %}" class="btn btn-primary btn-lg">View Clubs</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card text-center shadow-lg border-0">
+        <div class="card-body bg-light">
+          <h5 class="card-title text-primary">Users</h5>
+          <p class="card-text text-muted">Manage all registered users.</p>
+          <a href="{% url 'admin:auth_user_changelist' %}" class="btn btn-primary btn-lg">View Users</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <!-- Payments & Premium Clubs Section (Second Row) -->
+    <div class="col-md-6 mb-4">
+      <div class="card text-center shadow-lg border-0">
+        <div class="card-body bg-light">
+          <h5 class="card-title text-primary">Payments</h5>
+          <p class="card-text text-muted">View and manage all payments.</p>
+          <a href="{% url 'admin:subscriptions_payment_changelist' %}" class="btn btn-primary btn-lg">View Payments</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card text-center shadow-lg border-0">
+        <div class="card-body bg-light">
+          <h5 class="card-title text-success">Premium Clubs</h5>
+          <p class="card-text text-muted">View all premium clubs.</p>
+          <a href="{% url 'admin:account_club_changelist' %}?is_premium__exact=1" class="btn btn-success btn-lg">View Premium Clubs</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,341 @@
+{% extends 'main/base.html' %}
+
+{% block title %} {{ user.username }}'s Profile {% endblock %}
+{% load static %}
+
+{% block content %}
+
+<style>
+.card:hover {
+    transform: translateY(-8px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+h5, h6 {
+    margin-bottom: 0.5rem;
+}
+.profile-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    background-color: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.profile-card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+.social-icons a {
+    margin-right: 15px;
+    color: black;
+}
+.social-icons a:hover {
+    color: darkorange;
+}
+.edit-btn {
+    background: black;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+.bookmark-icon {
+    font-size: 22px;
+}
+body.dark .profile-card {
+    background-color: rgb(49, 49, 49);
+    color: white;
+}
+body.dark .card {
+    background-color: rgb(62, 62, 62);
+    color: white;
+}
+body.dark .me-3,
+body.dark .bi.bi-calendar,
+body.dark .bi.bi-plus-lg {
+    color: white;
+}
+.achievement-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    background-color: #fdfdfd;
+    overflow: hidden;
+}
+.achievement-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+.achievement-date {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 8px;
+}
+.achievement-content {
+    font-size: 0.95rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+.achievement-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+body.dark .achievement-card {
+    background-color: #3a3a3a;
+    color: white;
+    border: 1px solid #555;
+}
+
+.profile-card p,
+.profile-card div,
+.achievement-card p {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+</style>
+
+<div class="container my-5" style="max-width: 1000px; overflow: hidden;">
+
+    <!-- Profile Card -->
+    <div class="profile-card d-flex justify-content-between align-items-center mb-5 shadow">
+        <div class="d-flex align-items-center">
+            {% if user.is_authenticated and user.athlete %}
+                {% if user.athlete.profilePhoto %}
+                    <img src="{{ user.athlete.profilePhoto.url }}" alt="Profile Photo" class="profile-img me-3 border">
+                {% else %}
+                    <img src="{% static 'images/userprofile.png' %}" alt="Default Photo" class="profile-img me-3 border">
+                {% endif %}
+                <div>
+                    <h5 class="fw-bold">{{ user.first_name }}{% if user.athlete.isPrivate %}
+                        <i class="bi bi-lock-fill"></i>
+                    {% endif %}</h5>
+                    <h6>@{{ user.username }}</h6>
+
+                    {% if user.athlete.bio %}
+                        <div class="me-3 small mb-1">{{ user.athlete.bio }}</div>
+                    {% endif %}
+
+                    <div class="d-flex flex-wrap small text-muted">
+                        {% if user.athlete.city %}
+                            <div class="me-3"><i class="bi bi-geo-alt"></i> {{ user.athlete.city }}</div>
+                        {% endif %}
+                        {% if user.athlete.sport %}
+                            <div class="me-3"><i class="bi bi-trophy"></i> {{ user.athlete.sport }}</div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            {% else %}
+                <img src="{{ user.club.photo.url }}" alt="Club Profile Photo" class="profile-img me-3 border">
+                <div>
+                    <h5 class="fw-bold">{{ user.club.clubName }} <i class="bi bi-patch-check-fill"></i></h5>
+                    <h6>@{{ user.username }}</h6>
+                    {% if user.club.description %}
+                        <div class="small text-muted mb-1">{{ user.club.description }}</div>
+                    {% endif %}
+                    <div class="d-flex flex-wrap small text-muted">
+                        {% if user.club.city %}
+                            <div class="me-3"><i class="bi bi-geo-alt"></i> {{ user.club.city }}</div>
+                        {% endif %}
+                        {% if user.club.sport %}
+                            <div><i class="bi bi-trophy"></i> {{ user.club.sport }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="d-inline align-items-center text-end">
+            {% if request.user == user %}
+                {% if user.athlete %}
+                    <a href="{% url 'account:edit_profile_athlete_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
+                {% elif user.club %}
+                    <a href="{% url 'account:edit_profile_club_view' user.id %}" class="btn edit-btn me-3">Edit Profile</a>
+                {% endif %}
+            {% endif %}
+
+            {% if request.user.is_authenticated and not request.user == user and not request.user.is_superuser %}
+            <div class="row">
+                <form method="post" action="{% url 'bookmarks:bookmark_profile' user.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link p-0">
+                        {% if is_bookmarked %}
+                            <i class="bi bi-bookmark-fill" style="color: black; font-size: 24px;"></i>
+                        {% else %}
+                            <i class="bi bi-bookmark" style="color: black;font-size: 24px;"></i>
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+
+            {% if request.user.is_authenticated and not request.user == user %}
+                <a href="{% url 'direct_message:chat_page' username=user.username %}" class="me-2 text-black" title="Messages">
+                    <i class="fas fa-inbox fa-lg" style="margin-top: 1rem;"></i>
+                </a>
+            {% endif %}
+
+            {% if request.user.is_superuser %}
+                <form method="post" action="{% url 'account:delete_profile' user.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link p-0">
+                        <i class="bi bi-trash" style="color: black; font-size: 24px;"></i>
+                    </button>
+                </form>
+            {% endif %}
+
+            <div class="social-icons mt-2">
+                {% if user.athlete %}
+                    {% if user.athlete.facebook %}<a href="{{ user.athlete.facebook }}"><i class="bi bi-facebook"></i></a>{% endif %}
+                    {% if user.athlete.instagram %}<a href="{{ user.athlete.instagram }}"><i class="bi bi-instagram"></i></a>{% endif %}
+                    {% if user.athlete.twitterX %}<a href="{{ user.athlete.twitterX }}"><i class="bi bi-twitter-x"></i></a>{% endif %}
+                {% elif user.club %}
+                    {% if user.club.facebook %}<a href="{{ user.club.facebook }}"><i class="bi bi-facebook"></i></a>{% endif %}
+                    {% if user.club.instagram %}<a href="{{ user.club.instagram }}"><i class="bi bi-instagram"></i></a>{% endif %}
+                    {% if user.club.twitterX %}<a href="{{ user.club.twitterX }}"><i class="bi bi-twitter-x"></i></a>{% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-3">
+            <div class="profile-card mb-4">
+       {% if request.user.is_authenticated and user.athlete %}
+    <h6 class="fw-bold">Achievements</h6>
+
+    {% if achievements %}
+        {% for achievement in achievements %}
+            <div class="achievement-card position-relative">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="achievement-title">{{ achievement.title }}</div>
+                        {% if achievement.dateOfStart or achievement.dateOfEnd %}
+                            <div class="achievement-date">
+                                {% if achievement.dateOfStart %}{{ achievement.dateOfStart|date:"F d, Y" }}{% endif %}
+                                {% if achievement.dateOfEnd %} - {{ achievement.dateOfEnd|date:"F d, Y" }}{% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% if request.user == user %}
+                        <div class="dropdown">
+                            <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <form method="post" action="{% url 'account:delete_achievement' user.id achievement.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item text-danger">Delete</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if achievement.content %}
+                    <div class="achievement-content">{{ achievement.content }}</div>
+                {% endif %}
+
+                {% if achievement.file %}
+                    <img src="{{ achievement.file.url }}" alt="achievement file">
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No achievements yet.</p>
+    {% endif %}
+{% endif %}
+
+{% if request.user == user and user.athlete %}
+    <a href="{% url 'account:add_achievement' user.id %}" class="btn edit-btn me-3">Add Achievement</a>
+{% endif %}
+
+
+                <hr>
+                <h6 class="fw-bold mt-2">Contact Info</h6>
+                <p>Email: {{ user.email }}</p>
+                {% if request.user.is_authenticated and user.athlete %}
+                    <p>Phone: {{ user.athlete.phoneNumber|default:"-" }}</p>
+                    <hr>
+                    {% if user.athlete.height %}<p>Height: {{ user.athlete.height }} cm</p>{% endif %}
+                    {% if user.athlete.weight %}<p>Weight: {{ user.athlete.weight }} kg</p>{% endif %}
+                {% endif %}
+            </div>
+
+            {% if request.user == user %}
+                <a href="{% url 'bookmarks:all_bookmarks' %}" class="text-decoration-none text-dark">
+                    <div class="profile-card mb-4 text-center">
+                        <h6 class="fw-bold">Bookmarked Posts</h6>
+                        <div class="bookmark-icon d-block mt-2" > <i class=" bi bi-bookmark"></i></div>
+                    </div>
+                </a>
+            {% endif %}
+
+            {% if request.user.is_authenticated and user.club %}
+                <a href="{% url 'offers:my_offers' user.club.id %}" class="text-decoration-none text-dark">
+                    <div class="profile-card mb-4 text-center">
+                        <h6 class="fw-bold">Offers</h6>
+                        <div class="bookmark-icon d-block mt-2" > <i class="bi bi-card-heading"></i></div>
+                    </div>
+                </a>
+            {% endif %}
+
+            {% if request.user == user and not user.is_superuser %}
+                <a href="{% url 'bookmarks:all_bookmarked_profiles' %}" class="text-decoration-none text-dark">
+                    <div class="profile-card mb-4 text-center">
+                        <h6 class="fw-bold"> Bookmarked Profiles </h6>
+                        <div class="bookmark-icon d-block mt-2"><i class=" bi bi-bookmark"></i></div>
+                    </div>
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Posts Section -->
+        <div class="col-md-9">
+            <div class="profile-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    {% if request.user == user %}
+                        <h5 class="fw-bold mb-0">My Posts</h5>
+                        <a href="{% url 'posts:add_post' %}" class="dark"><i class="bi bi-plus-lg" style="color: black; font-size: 24px;"></i></a>
+                    {% else %}
+                        <h5 class="fw-bold mb-0">{{ user.username }}'s Posts</h5>
+                    {% endif %}
+                </div>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            {% if posts %}
+                                {% include "posts/post_card.html" %}
+                            {% else %}
+                                <p class="text-muted text-center">No posts yet.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
